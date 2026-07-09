@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Upload</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+        .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        button { background: #6366f1; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        input, textarea { width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background: #d1fae5; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        .error { background: #fee2e2; padding: 10px; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>📄 Resume Upload Test</h2>
+        
+        <div id="loginStatus"></div>
+        
+        <input type="file" id="resumeFile" accept=".pdf,.docx,.txt">
+        <textarea id="jobDesc" rows="3" placeholder="Job Description (optional)"></textarea>
+        <button onclick="uploadFile()">🚀 Upload</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Check login
+        const token = localStorage.getItem('token');
+        const statusDiv = document.getElementById('loginStatus');
+        
+        if (token) {
+            statusDiv.innerHTML = '✅ Logged in!';
+            statusDiv.style.color = 'green';
+        } else {
+            statusDiv.innerHTML = '❌ Not logged in! <a href="login.html">Login here</a>';
+            statusDiv.style.color = 'red';
+        }
+        
+        async function uploadFile() {
+            const file = document.getElementById('resumeFile').files[0];
+            if (!file) {
+                alert("Select a file");
+                return;
+            }
+            
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("Please login first");
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('resume', file);
+            formData.append('job_description', document.getElementById('jobDesc').value);
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '📤 Uploading...';
+            resultDiv.className = '';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/upload-resume', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                const data = await response.json();
+                console.log("Response:", data);
+                
+                if (response.ok && data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            ✅ Upload Successful!<br>
+                            <strong>Match Score: ${data.match_score}%</strong><br>
+                            📋 Skills: ${data.matched_skills?.join(', ') || 'None'}
+                        </div>
+                    `;
+                    alert(`Success! Match Score: ${data.match_score}%`);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Error: ${data.error || 'Upload failed'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Network Error: ${error.message}<br>Make sure backend is running on port 5000</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

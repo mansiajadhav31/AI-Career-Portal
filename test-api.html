@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Connection Test</h1>
+    <button onclick="testAPI()">Test API</button>
+    <pre id="result"></pre>
+
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerText = "Testing...";
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: 'test@test.com', password: 'test' })
+                });
+                
+                resultDiv.innerText = "Status: " + response.status + "\n\nResponse will come even if login fails - that's OK!";
+                
+                if (response.status === 404) {
+                    resultDiv.innerText += "\n\n❌ Backend NOT found on port 5000!";
+                } else {
+                    resultDiv.innerText += "\n\n✅ Backend is running on port 5000!";
+                }
+            } catch(err) {
+                resultDiv.innerText = "❌ Error: " + err.message + "\n\nBackend is NOT running!";
+            }
+        }
+    </script>
+</body>
+</html>

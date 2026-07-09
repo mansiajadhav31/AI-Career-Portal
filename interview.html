@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Mock Interview - AI Career Portal</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .camera-container {
+            background: #1e1e1e;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #videoElement {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 10px;
+            background: #000;
+        }
+        .mic-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin: 5px;
+        }
+        .mic-active {
+            background: #22c55e;
+            color: white;
+        }
+        .mic-inactive {
+            background: #ef4444;
+            color: white;
+        }
+        .recording {
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="logo">🚀 AI Career Portal</a>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="interview.html">Mock Interview</a>
+                <a href="coding.html">Coding Practice</a>
+                <a href="#" id="logoutBtn">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>🎤 AI Mock Interview</h1>
+        <p>Practice with AI-powered interview questions and get instant feedback</p>
+
+        <!-- Setup Section -->
+        <div class="card" id="setupSection">
+            <h3>Interview Setup</h3>
+            <!-- Professional Girl Avatar with Voice Welcome -->
+<div class="avatar-welcome-section" style="text-align: center; margin-bottom: 20px; padding: 20px; background: linear-gradient(135deg, #e0e7ff, #fae8ff); border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div class="avatar-container" style="position: relative; display: inline-block;">
+        <div id="aiAvatar" style="width: 110px; height: 110px; margin: 0 auto; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3); transition: all 0.3s ease; cursor: pointer; border: 3px solid white;">
+            <span id="avatarEmoji" style="font-size: 60px;">👩‍💼</span>
+        </div>
+        <div id="avatarStatus" style="margin-top: 10px; font-size: 13px; color: #6366f1; font-weight: 600; background: white; padding: 5px 15px; border-radius: 25px; display: inline-block; width: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">Career Coach Ava</div>
+    </div>
+    <div style="margin-top: 15px;">
+        <h3 id="welcomeUser" style="margin: 0; color: #333; font-size: 20px;">Welcome, <span id="userNameDisplay" style="color: #6366f1;">Guest</span>! 👋</h3>
+        <p id="welcomeMessage" style="margin: 8px 0 0; color: #666; font-size: 14px;">I'm Ava, your professional career coach. Let's ace this interview!</p>
+    </div>
+</div>
+            
+            <!-- Camera & Microphone Section -->
+            <div style="background: #f8f9ff; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <h4>🎥 Camera & Microphone Setup</h4>
+                <div class="camera-container">
+                    <video id="videoElement" autoplay playsinline style="width: 100%; max-width: 400px; border-radius: 10px;"></video>
+                    <div style="margin-top: 10px;">
+                        <button type="button" class="btn btn-secondary" onclick="startCamera()" style="margin: 5px;">📷 Start Camera</button>
+                        <button type="button" class="btn btn-secondary" onclick="stopCamera()" style="margin: 5px;">⏹️ Stop Camera</button>
+                        <button type="button" class="btn btn-secondary" onclick="testMicrophone()" style="margin: 5px;">🎤 Test Mic</button>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <span id="micStatus" class="mic-status mic-inactive">🎤 Microphone: Off</span>
+                        <span id="cameraStatus" class="mic-status mic-inactive">📷 Camera: Off</span>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="startRecording()" style="margin: 5px;">🔴 Start Recording</button>
+                <button type="button" class="btn btn-secondary" onclick="stopRecording()" style="margin: 5px;">⏹️ Stop Recording</button>
+                <div id="recordingStatus" style="margin-top: 10px; font-size: 14px;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label>Job Role</label>
+                <select id="jobRole">
+                    <option value="Software Developer">Software Developer</option>
+                    <option value="Data Scientist">Data Scientist</option>
+                    <option value="DevOps Engineer">DevOps Engineer</option>
+                    <option value="Product Manager">Product Manager</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Experience Level</label>
+                <select id="experienceLevel">
+                    <option value="Beginner">Beginner (0-2 years)</option>
+                    <option value="Mid">Mid Level (3-5 years)</option>
+                    <option value="Senior">Senior (6+ years)</option>
+                </select>
+            </div>
+            <button class="btn btn-primary" onclick="startInterview()">🎤 Start Interview</button>
+        </div>
+
+        <!-- Interview Section -->
+        <div id="interviewSection" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+            <div id="questionsContainer"></div>
+            <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="submitInterview()">📤 Submit Answers</button>
+                <button class="btn btn-outline" onclick="resetInterview()">❌ Cancel</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" style="display: none;">
+            <div class="card">
+                <h3>📊 Interview Results</h3>
+                <div id="resultsContent"></div>
+                <button class="btn btn-primary" onclick="resetInterview()">🔄 Practice Again</button>
+                <a href="dashboard.html" class="btn btn-outline">📊 Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
